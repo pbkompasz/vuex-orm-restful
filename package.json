@@ -1,0 +1,56 @@
+{
+  "name": "vuex-orm-rest",
+  "version": "3.0",
+  "description": "vuex-orm plugin for RESTful backends",
+  "main": "dist/index.js",
+  "repository": "https://github.com/pbkompasz/vuex-orm-rest",
+  "author": "pbkompasz",
+  "license": "MIT",
+  "bugs": {
+    "url" : "https://github.com/pbkompasz/vuex-orm-rest/issues",
+    "email" : "pbkompasz@gmail.com"
+  },
+  "private": false,
+  "scripts": {
+    "build": "webpack --mode=production",
+    "lint": "eslint src/**/*.js test/**/*.js",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "@/(.*)$": "<rootDir>/src/$1",
+      "tests/(.*)$": "<rootDir>/tests/$1"
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.js"
+    ]
+  },
+  "dependencies": {
+    "arboreal.js": "^0.0.3",
+    "lodash": "^4.17.11",
+    "path.join": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@vuex-orm/core": "^0.26.2",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "^8.0.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^5.4.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^21.22.0",
+    "jest": "^23.5.0",
+    "vue": "^2.5.17",
+    "vuex": "^3.0.1",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0"
+  }
+}
