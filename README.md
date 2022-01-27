@@ -2,9 +2,22 @@
   <img width="192" src="https://github.com/vuex-orm/vuex-orm/raw/master/logo-vuex-orm.png" alt="Vuex ORM">
 </p>
 
-v. 3.0
+<!---
+// TODO
+// write Introduction in README
+// remove commits from fork
+// try with webpack
+// sleep
+-->
+
 
 <h1 align="center">Vuex ORM Plugin: vuex-orm-rest</h1>
+
+This is a fork of the original vuex-orm-rest plugin by [@bierik](https://github.com/bierik/).
+Current improvements: 
+ - bugfixes
+ - works with all associations supported by vuex-orm
+ - added support for custom model methods
 
 [Vuex-ORM](https://github.com/vuex-orm/vuex-orm) brings Object-Relational Mapping to the Vuex Store. vuex-orm-rest lets you communicate with RESTful backends.
 
@@ -72,6 +85,36 @@ The plugin requires a HTTP-Client to make requests to the backend. The client is
 # Defining models
 
 Go to https://vuex-orm.github.io/vuex-orm/guide/components/models.html to see how to define models using Vuex-ORM.
+
+## Custom methods
+
+```javascript
+// User Model
+
+import { Model } from '@vuex-orm/core'
+
+export default class User extends Model {
+    // This is the name used as module name of the Vuex Store.
+    static entity = 'user'
+    static apiPath = 'user'; 
+
+    // List of all fields (schema) of the post model. `this.attr` is used
+    // for the generic field type. The argument is the default value.
+    static fields () {
+        return {
+            id: this.attr(null),
+            name: this.attr(''),
+            age: this.attr('')
+        }
+    }
+    static methods () {
+        const findUsersYounger = (id) => {
+            const user = User.fetch(id)
+            return User.fetchAll({ filter: { age: age => age < user.age } });
+        }
+    }
+}
+```
 
 # Interacting with the backend
 
@@ -322,3 +365,5 @@ const res = await Queue
   .sequence((res) => Promise.resolve(res))
   .exec(); // Evaluates to [2, 2, 2]
 ```
+
+## 
