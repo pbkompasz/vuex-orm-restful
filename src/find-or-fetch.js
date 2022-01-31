@@ -1,12 +1,12 @@
 import { checkConstraints } from './constraint';
-import _ from 'lodash';
+import { isUndefined, isNumber, isNull } from 'lodash';
 
 export default async function findOrFetch(id) {
-  if (_.isUndefined(id)) {
+  if (isUndefined(id)) {
     throw new Error('No id is provided');
   }
 
-  if (!_.isNumber(id)) {
+  if (!isNumber(id)) {
     throw new Error('The id provided is not a number');
   }
 
@@ -14,7 +14,7 @@ export default async function findOrFetch(id) {
 
   const record = this.find(id);
 
-  if (_.isNull(record)) {
+  if (isNull(record)) {
     return this.fetch(id);
   }
 

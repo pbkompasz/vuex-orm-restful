@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { isUndefined } from 'lodash';
 import { checkConstraints } from './constraint';
 
 export default async function destroy() {
   const { delete: destroy } = this.client;
 
-  if (_.isUndefined(destroy)) {
+  if (isUndefined(destroy)) {
     throw new Error('HTTP Client has no `delete` method');
   }
 

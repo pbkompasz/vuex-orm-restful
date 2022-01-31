@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { isUndefined } from 'lodash';
 import { checkConstraints } from './constraint';
 
 export default async function update(keys = Object.keys(this.$toJson())) {
   const { patch } = this.client;
 
-  if (_.isUndefined(patch)) {
+  if (isUndefined(patch)) {
     throw new Error('HTTP Client has no `patch` method');
   }
 

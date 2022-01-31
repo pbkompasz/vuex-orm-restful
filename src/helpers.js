@@ -2,19 +2,19 @@ import {
     Attr,
     HasOne,
 } from '@vuex-orm/core'
-import _ from 'lodash';
+import { isUndefined, isArray, isObject } from 'lodash';
 
 const parseData = (data) => {
     if (!checkData(data)) {
         throw new Error('bad data')
     }
-    if (!_.isArray(data)) {
+    if (!isArray(data)) {
         data = [data]
     }  
     const objects = [] 
     data.forEach((a) => {
         for (field of a) {
-            if (_.isObject(field)) {
+            if (isObject(field)) {
 
             }
             

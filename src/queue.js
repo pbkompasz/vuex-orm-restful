@@ -1,5 +1,5 @@
 import Tree from 'arboreal.js';
-import _ from 'lodash';
+import { isArray } from 'lodash';
 
 class ParallelQueue {
   constructor() {
@@ -74,7 +74,7 @@ const queueInstance = {
     const res = queue
       .reduce(async (acc, q) => {
         const input = await acc;
-        if (_.isArray(q)) {
+        if (isArray(q)) {
           return Promise.all(q.map(f => f(input)));
         }
         return q(input);

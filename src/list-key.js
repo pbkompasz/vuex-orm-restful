@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { isUndefined } from 'lodash';
 import { checkEntityName } from './constraint';
 
 export default function listKey() {
   checkEntityName(this.constructor);
 
-  if (_.isUndefined(this.$id)) {
+  if (isUndefined(this.$id)) {
     throw new Error(`Unable to generate listKey on '${this.constructor.entity}'. No $id is present.`);
   }
 

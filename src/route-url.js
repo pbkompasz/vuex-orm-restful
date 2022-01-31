@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isUndefined } from 'lodash';
 import { checkEntityName } from './constraint';
 
 const ROUTE_TYPES = {
@@ -9,7 +9,7 @@ const ROUTE_TYPES = {
 export function routeURL(type = ROUTE_TYPES.SHOW, options = {}) {
   checkEntityName(this.constructor);
 
-  if (_.isUndefined(this.$id)) {
+  if (isUndefined(this.$id)) {
     throw new Error(`Unable to generate route URL. No id defined for '${this.constructor.entity}'.`);
   }
 

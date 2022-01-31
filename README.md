@@ -2,22 +2,20 @@
   <img width="192" src="https://github.com/vuex-orm/vuex-orm/raw/master/logo-vuex-orm.png" alt="Vuex ORM">
 </p>
 
-<!---
-// TODO
-// write Introduction in README
-// remove commits from fork
-// try with webpack
-// sleep
--->
-
-
 <h1 align="center">Vuex ORM Plugin: vuex-orm-rest</h1>
 
 This is a fork of the original vuex-orm-rest plugin by [@bierik](https://github.com/bierik/).
+Most improvements are focusing on working well with a sails.js backend.
 Current improvements: 
  - bugfixes
  - works with all associations supported by vuex-orm
  - added support for custom model methods
+ - calling all or find fetches automatically from backend if store is empty
+ - database.registerPath instead of registering every file manually
+ - passing 'populate: true' to find, fetch, findOrFetch returns populated models
+ - calling .populate('entity') populates entity field
+ - hasMany fills up database, some reason not working, array stays empty when using Model.insert, Model.insertOrUpdate
+ - findOrCreate method
 
 [Vuex-ORM](https://github.com/vuex-orm/vuex-orm) brings Object-Relational Mapping to the Vuex Store. vuex-orm-rest lets you communicate with RESTful backends.
 

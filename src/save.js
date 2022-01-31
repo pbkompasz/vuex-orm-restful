@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { isUndefined } from 'lodash';
 import { checkConstraints } from './constraint';
 
 export default async function save(keys = Object.keys(this.$toJson())) {
     const { post } = this.client;
 
-    if (_.isUndefined(post)) {
+    if (isUndefined(post)) {
         throw new Error('HTTP Client has no `post` method');
     }
 

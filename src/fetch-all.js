@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isUndefined, isObject,  } from 'lodash';
 import { checkConstraints } from './constraint';
 import joinPath from 'path.join';
 import { parseData, insertData} from './helpers'
@@ -11,11 +11,11 @@ export default async function fetchAll({
 } = {}) {
     const { get } = this.client;
 
-    if (_.isUndefined(get)) {
+    if (isUndefined(get)) {
         throw new Error('HTTP Client has no `get` method');
     }
 
-    if (!_.isObject(filter)) {
+    if (!isObject(filter)) {
         throw new Error('Filter needs to be an object');
     }
 
