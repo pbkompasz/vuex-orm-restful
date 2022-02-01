@@ -89,10 +89,13 @@ test('inserts fetched nested element in the database', async () => {
     const data1 = { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }
     const data2 = [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]
     const data3 = { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }
+    const data4 = { id: 1, name: 'active', vehicle: { id: 1, name: 'car' } }
     const get = mockResponse(data3);
     installPlugin({ get });
     // console.log(DummyCompl.getFields())
     const response = await NestedDummy.fetch(1);
+    const response1 = await NestedDummy.fetch(1).populate
+    console.log(response1)
     // console.log(response)
     // const response1 = await NestedDummy.fetch(1);
     // console.log(response1)
@@ -112,6 +115,11 @@ test('inserts fetched nested element in the database', async () => {
     expect(response[0].dummy[0]).toEqual({ $id: 1 })
 
 })
+
+// TODO
+// for hasone does not work yet
+// call .populate on return
+// write tests
 
 // test('throws error when response could not be processed', () => {
 //   const store = createStore(Dummy);

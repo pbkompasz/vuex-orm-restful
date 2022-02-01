@@ -13,9 +13,9 @@ Current improvements:
  - calling all or find fetches automatically from backend if store is empty
  - database.registerPath instead of registering every file manually
  - passing 'populate: true' to find, fetch, findOrFetch returns populated models
- - calling .populate('entity') populates entity field
+ - calling .populate('entity') populates entity field 
  - hasMany fills up database, some reason not working, array stays empty when using Model.insert, Model.insertOrUpdate
- - findOrCreate method
+ - findOrCreate method DONE
 
 [Vuex-ORM](https://github.com/vuex-orm/vuex-orm) brings Object-Relational Mapping to the Vuex Store. vuex-orm-rest lets you communicate with RESTful backends.
 

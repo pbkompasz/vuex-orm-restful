@@ -6,7 +6,7 @@ import {
     HasOne,
 } from '@vuex-orm/core'
 
-export default async function fetch(id, { useCache = true } = {}) {
+export default async function fetch(id, { useCache = true, populate = false } = {}) {
     const { get } = this.client;
 
     if (isUndefined(get)) {
@@ -49,21 +49,14 @@ export default async function fetch(id, { useCache = true } = {}) {
 
     const createEntity = (name, field, attrType, data) => {
         const tempModel = (self.database().entities.find((field) => { return field.name == field.model.entity}).model)
-        console.log(field)
-        console.log(self.fields())
-        console.log(data)
+        const returnData = { model: tempModel, data: { data: null } }
+        const d_copy = {
+            ...data[name],
+        }
         // fill in foreign keys
-        // switch (field.constructor.name) {
-        //     case 'BelongsTo':
-        //     case 'HasOne':
-                
-        //         break;
-       
-
-                
-        //     default:
-        //         break;
-        // }
+        d_copy[self.fields()[name].foreignKey] = (data[self.fields()[name].localKey])
+        returnData.data = { data: d_copy }
+        return returnData
     }
 
     const createEntities = (name, field, attrType, data) => {
@@ -78,22 +71,8 @@ export default async function fetch(id, { useCache = true } = {}) {
             returnData.data.data.push(d_copy)
         })
         return returnData
-        // console.log(field)
-        // console.log(self.fields()[name].foreignKey)
-        // console.log(data[self.fields()[name].localKey])
-        // console.log(name)
-        // switch (field.constructor.name) {
-        //     case 'BelongsTo':
-        //     case 'HasOne':
-                
-        //         break;
-       
-
-                
-        //     default:
-        //         break;
-        // }
     }
+
     const parseData = (data) => {
         try {
             // Sometimes data is null
@@ -124,20 +103,8 @@ export default async function fetch(id, { useCache = true } = {}) {
                 default:
                     break;
             }
-            // if (!isAttr(property, fields)) {
-            //     console.log('Nested property' + property)
-            //     // Replace object with it's id 
-            //     newData[property] = data[property].id;
-            //     // and store the object as a new entity
-            //     // objects.push({ model: getModel(property), data: { data: data[property] } })
-
-            // } else {
-            // }
         }
-        // TODO rewrite to this 
         objects.push({ model: self, data: { data: newData } })
-        // in main function call model.insetOrUpdate(data)
-        // objects.push({ data: newData })
         return objects;
     }
 
@@ -146,32 +113,14 @@ export default async function fetch(id, { useCache = true } = {}) {
     // rewrite test to expect array
 
     async function fetchAPI() {
+
+        
+
         return new Promise(async (resolve, reject) => {
             const data = await get(joinPath(self.apiPath, id.toString()));
             console.log(data)
             try {
-                // const insertedData = await saveData({
-                //     data,
-                //     insertOrUpdate: self.insertOrUpdate,
-                // });
                 const objects = parseData(data) 
-                console.log(objects)
-                // reject()
-                // console.log(self.fields()['nestedDummyId'].model.entity)
-                // const store = self.store()
-                // // const nestedDummyModel = store.state.entities['nestedDummy']
-                // // get model by field name
-                // const nestedDummyModel = (self.database().entities.find((a) => { return a.name == 'nestedDummy'}).model)
-                // if (nestedDummyModel) {
-                //     try {
-                //         console.log(nestedDummyModel)
-                //         console.log(self)
-                //         // just return model when rewrite
-                //         await nestedDummyModel.insertOrUpdate({ data: { id: 2, } })
-                //     } catch (error) {
-                //         console.log(error) 
-                //     }
-                // }
                 const insertedData = await Promise.all(objects.map(object => { 
                     console.log(object)
                     try {
@@ -181,10 +130,6 @@ export default async function fetch(id, { useCache = true } = {}) {
                     }
 
                 }));
-                // const insertedData = await self.insertOrUpdate(await parseData(data));
-                // const insertedData = await self.insertOrUpdate((data));
-                // console.log(insertedData[0])
-                // resolve(insertedData[self.entity][0]);
                 resolve(insertedData)
             } catch (error) {
                 console.log(error.message)
