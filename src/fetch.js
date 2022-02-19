@@ -40,7 +40,7 @@ export default async function fetch(id, { useCache = true, populate = false } = 
         // }
         const field = fields[val];
         // if (field.constructor.name == 'HasOne' ||  )
-        if (['HasOne', 'BelongsTo', 'HasMany', 'hasManyBy', 'BelongsToMany', 'HasManyThrough', 'MorphOne', 'MorphTo', 'MorphMany', 'MorphToMany', 'MorphedByMany', ]
+        if (field && ['HasOne', 'BelongsTo', 'HasMany', 'hasManyBy', 'BelongsToMany', 'HasManyThrough', 'MorphOne', 'MorphTo', 'MorphMany', 'MorphToMany', 'MorphedByMany', ]
             .includes(field.constructor.name)) {
             return field.constructor.name.toLowerCase(); 
         }
