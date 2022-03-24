@@ -39,6 +39,10 @@ export default async function fetch(id, { useCache = true, populate = false } = 
         //     return true;
         // }
         const field = fields[val];
+        if (!field.constructor) {
+            console.log('no constructor')
+            return 'simple'
+        }
         // if (field.constructor.name == 'HasOne' ||  )
         if (field && ['HasOne', 'BelongsTo', 'HasMany', 'hasManyBy', 'BelongsToMany', 'HasManyThrough', 'MorphOne', 'MorphTo', 'MorphMany', 'MorphToMany', 'MorphedByMany', ]
             .includes(field.constructor.name)) {
