@@ -1,5 +1,5 @@
 {
-  "name": "vuex-orm-rest",
+  "name": "vuex-orm-restful",
   "version": "3.0.0",
   "description": "vuex-orm plugin for RESTful backends",
   "main": "dist/index.js",

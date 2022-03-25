@@ -35,7 +35,6 @@ export default async function fetchAll({
     function fetchAPI() {
         return new Promise(async (resolve, reject) => {
             const path = joinPath(...relations.map(r => r.apiPath()), self.apiPath);
-            console.log(path)
             const data = await get(path, { params: filter });
             try {
                 const insertedData = replace ? await self.create(data) : await self.insertOrUpdate(data);

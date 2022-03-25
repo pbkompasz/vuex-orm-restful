@@ -1,6 +1,8 @@
 import { Model } from '@vuex-orm/core';
 import { installPlugin, createStore, mockResponse } from './helpers';
 
+let testName
+
 class EntityDummy extends Model {
   static entity = '';
 }
@@ -40,6 +42,31 @@ class NestedDummy extends Model {
     }
 }
 
+class Vehicle extends Model {
+    static entity = 'vehicle'
+    static apiPath = 'vehicle'
+    static fields() {
+        return {
+            id: this.attr(null),
+            make: this.attr(null),
+            status: this.attr(null),
+        }
+    }
+}
+
+
+
+class Status extends Model {
+    static entity = 'status'
+    static apiPath = 'status'
+    static fields() {
+        return {
+            id: this.attr(null),
+            name: this.attr(''),
+            vehicles: this.hasMany(Vehicle, 'status'),
+        }
+    }
+}
 // test('Throws error when the client has no get method', () => {
 //   installPlugin();
 //   expect(Model.fetch()).rejects.toEqual(new Error('HTTP Client has no `get` method'));
@@ -83,38 +110,94 @@ class NestedDummy extends Model {
 // //   expect(response).toEqual({ $id: 1 });
 // });
 
-test('inserts fetched nested element in the database', async () => {
-    const store = createStore(DummyCompl, NestedDummy);
-    // const store1 = createStore(NestedDummy);
-    const data1 = { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }
-    const data2 = [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]
-    const data3 = { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }
-    const data4 = { id: 1, name: 'active', vehicle: { id: 1, name: 'car' } }
-    const get = mockResponse(data3);
-    installPlugin({ get });
-    // console.log(DummyCompl.getFields())
-    const response = await NestedDummy.fetch(1);
-    const response1 = await NestedDummy.fetch(1).populate
-    console.log(response1)
-    // console.log(response)
-    // const response1 = await NestedDummy.fetch(1);
-    // console.log(response1)
-    // await NestedDummy.insertOrUpdate({ data: { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }})
-    // await NestedDummy.insert({ data: { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }})
-    // await DummyCompl.insertOrUpdate({ data: [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]})
-    // await NestedDummy.insert({ data: { id: 1, name: 'active', }})
-    // await NestedDummy.insert({ data: { id: 2, name: 'inactive', }})
-    // const nested = NestedDummy.find(1)
-    // nested.vehicles = nested.vehicles.concat(DummyCompl.all().filter((a) => {
-    //     return a.status_id === nested.id
-    // }))
-    // console.log(nested)
-    console.log(NestedDummy.all())
-    console.log(DummyCompl.all())
-    expect(DummyCompl.find(1)).toEqual({ $id: 1 });
-    expect(response[0].dummy[0]).toEqual({ $id: 1 })
+// testName = 'inserts fetched nested element in the database' 
+// test(testName, async () => {
+//     console.log(testName)
+//     const store = createStore(DummyCompl, NestedDummy);
+//     // const store1 = createStore(NestedDummy);
+//     const data1 = { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }
+//     const data2 = [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]
+//     const data3 = { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }
+//     const data4 = { id: 1, name: 'active', vehicle: { id: 1, name: 'car' } }
+//     const get = mockResponse(data3);
+//     installPlugin({ get });
+//     // console.log(DummyCompl.getFields())
+//     const response = await NestedDummy.fetch(1);
+//     console.log(NestedDummy.all())
+//     console.log(DummyCompl.all())
+//     expect(DummyCompl.find(1)).toEqual({ '$id': 1, id: 1, status_id: 1, name: 'car' });
+//     // expect(response[0].dummy[0]).toEqual({ $id: 1 })
 
+// })
+
+test( 'vehicle-status example, with primary key as nested value', async () => {
+    console.log('vehicle-status example, with primary key as nested value')
+    const store = createStore(Vehicle, Status);
+    const statusActive = { id: 1, name: 'active', vehicles: [1, 2] }
+    const statusInactive = { id: 2, name: 'inactive', vehicles: [3] }
+    const get = mockResponse(statusActive);
+    installPlugin({ get });
+    const response = await Status.fetch(1);
+    console.log(Status.all())
+    console.log(Status.find(1))
+    console.log(response[0])
+    // expect(Status.find(1)).toEqual({ '$id': 1, id: 1, name: 'active', vehicles: [1, 2] });
+    expect(response[0].status[0]).toEqual({ '$id': 1, id: 1, name: 'active', vehicles: [1, 2] });
+    // expect(await Status.fetch(1)).toEqual(Status.find(1));
 })
+
+// testName = 'vehicle-status example, with primary key as nested value with populate'
+// test(testName, async () => {
+//     console.log(testName)
+//     const store = createStore(Vehicle, Status);
+//     const statusActive = { id: 1, name: 'active', vehicles: [1, 2] }
+//     const statusInactive = { id: 2, name: 'inactive', vehicles: [3] }
+//     const response = await Status.fetch(1, {
+//         populate: true,
+//     });
+// })
+
+// testName = 'vehicle-status example, with object as nested value'
+// test(testName, async () => {
+//     console.log(testName)
+//     const store = createStore(Vehicle, Status);
+//     const statusActive = { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }
+//     const statusInactive = { id: 2, name: 'inactive', vehicles: [{ id: 3, name: 'car' }] }
+//     const response = await Status.fetch(1);
+//     console.log(Vehicle.all())
+//     console.log(Status.all())
+// })
+
+// test('inserts fetched nested element in the database with populate', async () => {
+//     const store = createStore(DummyCompl, NestedDummy);
+//     // const store1 = createStore(NestedDummy);
+//     const data1 = { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }
+//     const data2 = [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]
+//     const data3 = { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }
+//     const data4 = { id: 1, name: 'active', vehicle: { id: 1, name: 'car' } }
+//     const get = mockResponse(data3);
+//     installPlugin({ get });
+//     // console.log(DummyCompl.getFields())
+//     const response = await NestedDummy.fetch(1).populate()
+//     console.log(response)
+//     // const response1 = await NestedDummy.fetch(1);
+//     // console.log(response1)
+//     // await NestedDummy.insertOrUpdate({ data: { id: 1, vehicles: [{ id: 1, }, { id: 2 }] }})
+//     // await NestedDummy.insert({ data: { id: 1, name: 'active', vehicles: [{ id: 1, name: 'car' }, { id: 2, name: 'bus' }] }})
+//     // await DummyCompl.insertOrUpdate({ data: [{ id: 1, name: 'car',  status_id: 1 }, { id: 2, name: 'bus', status_id: 2}]})
+//     // await NestedDummy.insert({ data: { id: 1, name: 'active', }})
+//     // await NestedDummy.insert({ data: { id: 2, name: 'inactive', }})
+//     // const nested = NestedDummy.find(1)
+//     // nested.vehicles = nested.vehicles.concat(DummyCompl.all().filter((a) => {
+//     //     return a.status_id === nested.id
+//     // }))
+//     // console.log(nested)
+//     // console.log(NestedDummy.all())
+//     // console.log(DummyCompl.all())
+//     expect(DummyCompl.find(1)).toEqual({ $id: 1 });
+//     expect(response[0].dummy[0]).toEqual({ $id: 1 })
+
+// })
 
 // TODO
 // for hasone does not work yet

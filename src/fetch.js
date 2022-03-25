@@ -39,8 +39,7 @@ export default async function fetch(id, { useCache = true, populate = false } = 
         //     return true;
         // }
         const field = fields[val];
-        if (!field.constructor) {
-            console.log('no constructor')
+        if (!field || !field.constructor) {
             return 'simple'
         }
         // if (field.constructor.name == 'HasOne' ||  )
@@ -82,7 +81,11 @@ export default async function fetch(id, { useCache = true, populate = false } = 
             // Sometimes data is null
             data = data.data;
         } catch (error) {
-            console.log(error.message)
+            console.log({
+                message: 'Data was null',
+                data,
+            })
+            console.log(error)
         }
         // Array containing objects
         const objects = []
@@ -90,19 +93,21 @@ export default async function fetch(id, { useCache = true, populate = false } = 
         const fields = self.getFields();
         for (const property in data) {
             const attrType = isAttr(property, fields);
-            console.log(attrType, property)
             switch (attrType) {
                 case 'simple':
-                    console.log('Normal property')
                     break;
                 case 'hasone':
 
-                    newData[property] = data[property].id;
-                    objects.push(createEntity(property, fields[property], attrType, data))
+                    if (populate) {
+                        newData[property] = data[property].id;
+                        objects.push(createEntity(property, fields[property], attrType, data))
+                    }
                     break;
                 case 'hasmany':
-                    objects.push(createEntities(property, fields[property], attrType, data))
-                    delete newData[property];
+                    if (populate) {
+                        objects.push(createEntities(property, fields[property], attrType, data))
+                        delete newData[property];
+                    }
                     break;
                 default:
                     break;
@@ -117,26 +122,23 @@ export default async function fetch(id, { useCache = true, populate = false } = 
     // rewrite test to expect array
 
     async function fetchAPI() {
-
-        
-
         return new Promise(async (resolve, reject) => {
             const data = await get(joinPath(self.apiPath, id.toString()));
-            console.log(data)
             try {
                 const objects = parseData(data) 
-                const insertedData = await Promise.all(objects.map(object => { 
-                    console.log(object)
+                const insertedData = await Promise.all(objects.map(async object => { 
+                    
                     try {
-                        return object.model.insertOrUpdate(object.data)
+                        return await object.model.insertOrUpdate(object.data)
                     } catch (error) {
+                        console.log('Tried inserting: ' + object)
                         console.log(error) 
                     }
 
                 }));
                 resolve(insertedData)
             } catch (error) {
-                console.log(error.message)
+                console.log(error)
                 reject(new Error('Unable to process response.'))
             }
         });
