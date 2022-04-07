@@ -121,6 +121,11 @@ export default async function fetch(id, { useCache = true, populate = false } = 
     // get model for each association
     // rewrite test to expect array
 
+    // TODO
+    // Return object like in sails.js
+    // .get() return Model.all() or Model.find(this.id)
+    // Model.getStatus() return status property
+
     async function fetchAPI() {
         return new Promise(async (resolve, reject) => {
             const data = await get(joinPath(self.apiPath, id.toString()));

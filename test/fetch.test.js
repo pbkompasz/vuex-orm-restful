@@ -49,7 +49,7 @@ class Vehicle extends Model {
         return {
             id: this.attr(null),
             make: this.attr(null),
-            status: this.attr(null),
+            status: this.hasOne(Status, 'id'),
         }
     }
 }
@@ -63,10 +63,37 @@ class Status extends Model {
         return {
             id: this.attr(null),
             name: this.attr(''),
-            vehicles: this.hasMany(Vehicle, 'status'),
+            // vehicles: this.hasMany(Vehicle, 'status'),
         }
     }
 }
+
+class User extends Model {
+  static entity = 'users'
+
+  static fields () {
+    return {
+      id: this.attr(),
+      name: this.attr(''),
+      todos: this.hasOne(Todo, 'id')
+    }
+  }
+}
+
+class Todo extends Model {
+  static entity = 'todos'
+
+  static fields () {
+    return {
+      id: this.attr(),
+      user_id: this.attr(null),
+      title: this.attr(''),
+      done: this.attr(false),
+    //   assignee: this.belongsTo(User, 'user_id')
+    }
+  }
+}
+
 // test('Throws error when the client has no get method', () => {
 //   installPlugin();
 //   expect(Model.fetch()).rejects.toEqual(new Error('HTTP Client has no `get` method'));
@@ -133,17 +160,78 @@ class Status extends Model {
 test( 'vehicle-status example, with primary key as nested value', async () => {
     console.log('vehicle-status example, with primary key as nested value')
     const store = createStore(Vehicle, Status);
-    const statusActive = { id: 1, name: 'active', vehicles: [1, 2] }
-    const statusInactive = { id: 2, name: 'inactive', vehicles: [3] }
-    const get = mockResponse(statusActive);
+    // const statusActive = { id: 1, name: 'active', vehicles: [1, 2] }
+    // const statusInactive = { id: 2, name: 'inactive', vehicles: [3] }
+    const vehicle = {
+            id: 1,
+            make: 'Merc',
+            status: {
+                name: 'Active',
+            }
+        }
+    const get = mockResponse(vehicle);
     installPlugin({ get });
-    const response = await Status.fetch(1);
+    const response = await Vehicle.fetch(1);
     console.log(Status.all())
-    console.log(Status.find(1))
-    console.log(response[0])
+    console.log(Vehicle.all())
+    // console.log(Status.find(1))
+    // console.log(response[0])
     // expect(Status.find(1)).toEqual({ '$id': 1, id: 1, name: 'active', vehicles: [1, 2] });
-    expect(response[0].status[0]).toEqual({ '$id': 1, id: 1, name: 'active', vehicles: [1, 2] });
+    // expect(response[0].status[0]).toEqual({ '$id': 1, id: 1, name: 'active', vehicles: [1, 2] });
     // expect(await Status.fetch(1)).toEqual(Status.find(1));
+})
+
+test('random', async () => {
+    const data = [
+        {
+            name: 'John Doe',
+            todos: [
+            {
+                id: 1,
+                title: 'Create awesome application!',
+                done: false
+            },
+            {
+                id: 2,
+                title: 'Read the documentation',
+                done: false
+            }
+            ]
+        },
+        {
+            name: 'Johnny Doe',
+            todos: [
+            {
+                id: 3,
+                title: 'Star Vuex ORM repository',
+                done: false
+            }
+            ]
+        }
+    ]
+    const dataVehicle = [
+        {
+            make: 'Merc',
+            status: {
+                name: 'Active',
+            }
+        },
+        {
+            make: 'Merc',
+            status: {
+                name: 'Active',
+            }
+        },
+    ]
+    // const store = createStore(User, Todo);
+    const store = createStore(Vehicle, Status);
+
+    Vehicle.insert({ data: dataVehicle })
+    // console.log(User.all())
+    // console.log(Todo.all())
+    console.log(Vehicle.all())
+    console.log(Status.all())
+
 })
 
 // testName = 'vehicle-status example, with primary key as nested value with populate'
