@@ -5,7 +5,7 @@
 <h1 align="center">Vuex ORM Plugin: vuex-orm-rest</h1>
 
 This is a fork of the original vuex-orm-rest plugin by [@bierik](https://github.com/bierik/).
-Most improvements are focusing on working well with a sails.js backend.
+<!-- Most improvements are focusing on working well with a sails.js backend.
 Current improvements: 
  - bugfixes
  - works with all associations supported by vuex-orm
@@ -15,7 +15,7 @@ Current improvements:
  - passing 'populate: true' to find, fetch, findOrFetch returns populated models
  - calling .populate('entity') populates entity field 
  - hasMany fills up database, some reason not working, array stays empty when using Model.insert, Model.insertOrUpdate
- - findOrCreate method DONE
+ - findOrCreate method DONE -->
 
 [Vuex-ORM](https://github.com/vuex-orm/vuex-orm) brings Object-Relational Mapping to the Vuex Store. vuex-orm-rest lets you communicate with RESTful backends.
 
@@ -55,11 +55,16 @@ The following exmaple installs the plugin using [axios](https://github.com/axios
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexORM from '@vuex-orm/core';
-import VuexORMRest from 'vuex-orm-rest';
+import VuexORMRest from 'vuex-orm-restful';
 import axios from 'axios';
 
 const client = axios.create({ baseURL: '/api' });
 const database = new VuexORM.Database();
+
+import Vehicle from 'classes/Vehicle';
+database.register(Vehicle, {});
+// or use the import method to register multiple classes
+VuexOrmRest.import('./classes/')
 
 VuexORM.use(VuexORMRest, { client });
 Vue.use(Vuex);
@@ -74,6 +79,7 @@ The plugin requires a HTTP-Client to make requests to the backend. The client is
 |----------|--------|
 | fetch    | get    |
 | fetchAll | get    |
+| fetchAssociation | get    |
 | save     | post   |
 | update   | patch  |
 | replace  | put    |
@@ -84,7 +90,7 @@ The plugin requires a HTTP-Client to make requests to the backend. The client is
 
 Go to https://vuex-orm.github.io/vuex-orm/guide/components/models.html to see how to define models using Vuex-ORM.
 
-## Custom methods
+<!-- ## Custom methods
 
 ```javascript
 // User Model
@@ -112,7 +118,7 @@ export default class User extends Model {
         }
     }
 }
-```
+``` -->
 
 # Interacting with the backend
 
@@ -144,24 +150,58 @@ database.register(User, {});
 ## fetch(id = null)
 
 Fills the store with a single item by id.
-Returns a promise with the fetched data.
+Returns a dictionary.
 
 ``` javascript
-User.fetch(1);
+// Fills the store
+await User.fetch(1);
 ```
 
-The fetched user now lies in the store and can be retrieved by using the Vuex-ORM actions.
+Retrieve the fetched record.
+By chaining ```.get()``` you can access the newly fetched record.
 
 ``` javascript
-const user = User.find(1);
+// Returns a record
+await User.fetch(1).get()
 ```
+
+By chaining ```.populate()``` it will populate child records for the specified collection.
+Populate may be called more than once.
+
+``` javascript
+// Returns a record with populated child record
+await User.fetch(1).populate('todo').get()
+```
+
+## fetchAssociation(id = null)
+
+
+``` javascript
+import { Model } from '@vuex-orm/core';
+
+class User extends Model {
+  static entity = 'users';
+  static apiPath = 'users';
+
+  static fields () {
+    return {
+      id: this.attr(null),
+      name: this.attr(''),
+      todo: this.hasOne(Todo, 'user_id'),
+    }
+  }
+}
+```
+
+Given the model above, the method ```User.fetchTodo(1)``` returns a ```Todo``` object that belongs to a ```User``` object with id 1.
 
 ## fetchAll({ filter = {}, relations = [], replace = false })
 
-Fills the store with a list of items.
-Returns a promise with the fetched data.
+Fills the store with a collection of records.
+Returns a dictionary.
 
 ``` javascript
+// Returns all records
 User.fetchAll();
 ```
 
@@ -179,16 +219,27 @@ Comments.fetchAll({ relations: [user] });
 // fetches using /user/1/comments
 ```
 
-Retrieve the fetched users.
+Retrieve the fetched records.
+By chaining ```.get()``` you can access the newly fetched records.
 
 ``` javascript
-User.all();
+// Returns all record
+await User.fetchAll().get()
 ```
+
+By chaining ```.populate()``` it will populate child records for all records.
+Populate may be called more than once.
+
+``` javascript
+// Returns all records with populated child records
+await User.fetchAll().populate('todo').get()
+```
+
 
 ## save(keys = Object.keys(this.$toJson()))
 
 Saves a user instance using post verb.
-Returns a promise with the post response.
+Returns a dictionary.
 
 ``` javascript
 const user = new User({ name: 'John Doe' });
@@ -201,12 +252,19 @@ Pass keys as param to define which attributes should be send to the backend.
 const user = new User({ name: 'John Doe' });
 user.save(['name']);
 ```
+Retrieve the newly created record.
+By chaining ```.get()``` you can access the newly fetched records.
 
+``` javascript
+// Returns all record
+const user = new User({ name: 'John Doe' });
+user.save().get();
+```
 
 ## update(keys = Object.keys(this.$toJson()))
 
 Updates an existing user using patch verb.
-Returns a promise with the patch response.
+Returns a dictionary.
 The update function also accepts a list of keys for every property that should be part of the patch payload.
 
 ``` javascript
