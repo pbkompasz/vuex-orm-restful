@@ -3,8 +3,6 @@
 </p>
 
 <h1 align="center">Vuex ORM Plugin: vuex-orm-rest</h1>
-
-This is a fork of the original vuex-orm-rest plugin by [@bierik](https://github.com/bierik/).
 <!-- Most improvements are focusing on working well with a sails.js backend.
 Current improvements: 
  - bugfixes
@@ -22,6 +20,10 @@ Current improvements:
 The plugin extends the basic model of Vuex-ORM with some helful functions to make CRUD operations such as (save, fetch, fetchAll, update and delete).
 
 You no longer need to access your http client manually. All the comunication happens thru the enhanced Vuex-ORM models.
+
+This is a fork of the original vuex-orm-rest plugin by [@bierik](https://github.com/bierik/).
+The previous version of this package required you to fill the Vuex store using this package and then retrieve the data from the store using the original Vuex-ORM package.
+In this version the main improvement is the replacement of the entire Vuex-ORM package with Vuex-ORM-restful. You no longer need to use the original package at all to fetch data, everything gets handled by Vuex-ORM-restful.
 
 # Dependencies
 
